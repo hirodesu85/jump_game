@@ -1,8 +1,10 @@
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:jump_game/components/maid_component.dart';
+import 'package:jump_game/games/jump_game.dart';
 
-class BallComponent extends CircleComponent with CollisionCallbacks {
+class BallComponent extends CircleComponent
+    with CollisionCallbacks, HasGameRef<JumpGame> {
   // 当たり判定を取るCollisionCallbacks をmixin
   BallComponent({super.position}) : super(radius: 10);
   final double ballSpeed = 10.0;
@@ -26,14 +28,13 @@ class BallComponent extends CircleComponent with CollisionCallbacks {
     super.onCollision(intersectionPoints, other);
     // 壁に当たった場合の処理
     if (other is ScreenHitbox) {
+      gameRef.jumpCount++; // ジャンプ回数を増やす
       removeFromParent(); // 自身をゲームから削除する
-      print("ball hit wall");
     }
 
     //メイドちゃんに当たった場合
     if (other is MaidComponent) {
       removeFromParent(); // 自身をゲームから削除する
-      print("ball hit maid");
     }
   }
 }

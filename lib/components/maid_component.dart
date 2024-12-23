@@ -9,6 +9,7 @@ class MaidComponent extends SpriteComponent with CollisionCallbacks {
   final double maxJump = 450.0; // ジャンプの最大高さ
   final double jumpSpeed = 10.0; // ジャンプの速度
   final double basePos; // ジャンプ開始・終了の高さ
+  bool isGameOver = false; // ゲームオーバーのフラグ
   MaidComponent(
       {super.position, super.size, super.sprite, required this.basePos})
       : super(anchor: Anchor.center, paint: BasicPalette.gray.paint());
@@ -47,7 +48,6 @@ class MaidComponent extends SpriteComponent with CollisionCallbacks {
     super.onCollision(intersectionPoints, other);
     // 玉に当たったらゲームオーバに
     if (other is BallComponent) {
-      print("maid hit ball");
       gameOver();
     }
   }
@@ -63,9 +63,20 @@ class MaidComponent extends SpriteComponent with CollisionCallbacks {
     position.y = basePos;
   }
 
-  // ゲームオーバー処理
+  // ゲームスタート、リスタート時に呼ばれる
+  // 画像、フラグのリセット
+  void gameStart() async {
+    final maidSprite = await Sprite.load('icon.JPG');
+    sprite = maidSprite;
+    isGameOver = false;
+  }
+
+  // ゲームオーバー
+  // 画像の差し替え、フラグの変更
   void gameOver() async {
+    positionReset();
     final endSprite = await Sprite.load('dokuro.png');
     sprite = endSprite;
+    isGameOver = true;
   }
 }
